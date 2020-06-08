@@ -51,7 +51,7 @@ def create_split (dataset):
     return train_data, validation_data, test_data
 
 def create_csv(data, name):
-  np.savetxt('./Assignment_1/{}.csv'.format(name), np.array(data) , delimiter=",", fmt='%s')
+  np.savetxt('./Assignment 1/{}.csv'.format(name), np.array(data) , delimiter=",", fmt='%s')
 
 
 def main():
