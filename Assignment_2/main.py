@@ -55,6 +55,7 @@ def main(dir_path):
     data_with_stopwords['test'] = read_csv(os.path.join(dir_path, 'test_data_with_stopwords.csv'))
     data_with_stopwords['train_label'] = get_labels(data_with_stopwords['train'])
     data_with_stopwords['valid_label'] = get_labels(data_with_stopwords['valid'])
+    data_with_stopwords['test_label'] = get_labels(data_with_stopwords['test'])
 
     print('\n Reading the CSV files without stopwords...\n')
 
@@ -64,6 +65,7 @@ def main(dir_path):
     data_without_stopwords['test'] = read_csv(os.path.join(dir_path, 'test_data_without_stopwords.csv'))
     data_without_stopwords['train_label'] = get_labels(data_without_stopwords['train'])
     data_without_stopwords['valid_label'] = get_labels(data_without_stopwords['valid'])
+    data_without_stopwords['test_label'] = get_labels(data_without_stopwords['test'])
 
     print ('\n Reading CSV files completed...\n')
 
@@ -77,22 +79,22 @@ def main(dir_path):
     result['unigram_with_stopwords'] = train_classifier(classifier, unigram_vect_with_stopwords,
                                                     data_with_stopwords['train'], 
                                                     data_with_stopwords['train_label'],
-                                                    data_with_stopwords['valid'], 
-                                                    data_with_stopwords['valid_label'])
+                                                    data_with_stopwords['test'],
+                                                    data_with_stopwords['test_label'])
     print('\n-------Bigram Features---------\n')
     bigram_vect_with_stopwords = CountVectorizer(min_df=2, ngram_range=(2, 2))
     result['bigram_with_stopwords'] = train_classifier(classifier, bigram_vect_with_stopwords,
                                                        data_with_stopwords['train'],
                                                        data_with_stopwords['train_label'],
-                                                       data_with_stopwords['valid'],
-                                                       data_with_stopwords['valid_label'])
+                                                       data_with_stopwords['test'],
+                                                       data_with_stopwords['test_label'])
     print('\n-------Both Unigram-Bigram Features---------\n')
     unigram_bigram_vect_with_stopwords = CountVectorizer(min_df=2, ngram_range=(1, 2))
     result['unigram_bigram_with_stopwords'] = train_classifier(classifier, unigram_bigram_vect_with_stopwords,
                                                                data_with_stopwords['train'],
                                                                data_with_stopwords['train_label'],
-                                                               data_with_stopwords['valid'],
-                                                               data_with_stopwords['valid_label'])
+                                                               data_with_stopwords['test'],
+                                                               data_with_stopwords['test_label'])
 
     print('\n Completed training classifier with stopwords data...\n')
 
@@ -103,22 +105,22 @@ def main(dir_path):
     result['unigram_without_stopwords'] = train_classifier(classifier, unigram_vect_without_stopwords,
                                                         data_without_stopwords['train'],
                                                         data_without_stopwords['train_label'],
-                                                        data_without_stopwords['valid'],
-                                                        data_without_stopwords['valid_label'])
+                                                        data_without_stopwords['test'],
+                                                        data_without_stopwords['test_label'])
     print('\n-------Bigram Features---------\n')
     bigram_vect_without_stopwords = CountVectorizer(min_df=2, ngram_range=(2, 2))
     result['bigram_without_stopwords'] = train_classifier(classifier, bigram_vect_without_stopwords,
                                                        data_without_stopwords['train'],
                                                        data_without_stopwords['train_label'],
-                                                       data_without_stopwords['valid'],
-                                                       data_without_stopwords['valid_label'])
+                                                       data_without_stopwords['test'],
+                                                       data_without_stopwords['test_label'])
     print('\n-------Both Unigram-Bigram Features---------\n')
     unigram_bigram_vect_without_stopwords = CountVectorizer(min_df=2, ngram_range=(1, 2))
-    result['unigram_bigram_with_stopwords'] = train_classifier(classifier, unigram_bigram_vect_without_stopwords,
+    result['unigram_bigram_without_stopwords'] = train_classifier(classifier, unigram_bigram_vect_without_stopwords,
                                                                data_without_stopwords['train'],
                                                                data_without_stopwords['train_label'],
-                                                               data_without_stopwords['valid'],
-                                                               data_without_stopwords['valid_label'])
+                                                               data_without_stopwords['test'],
+                                                               data_without_stopwords['test_label'])
 
     print('\n Completed training classifier without stopwords data...\n')
 
