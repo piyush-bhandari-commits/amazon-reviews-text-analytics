@@ -1,0 +1,9 @@
+excellent
+damage
+price
+wrong
+less
+more
+good
+bad
+great
