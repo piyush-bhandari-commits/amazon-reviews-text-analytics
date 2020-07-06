@@ -1,6 +1,7 @@
 import numpy as np
-import pandas as pd
 import re
+import sys
+import os
 from gensim.models import Word2Vec
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
@@ -26,36 +27,38 @@ def create_model(word_model, embedding_matrix, x_train_pad, y_train, hidden_laye
     batch = 32
     epochs = 10
     model = Sequential()
-    model.add(Embedding(len(word_model.wv.vocab) + 1, 50,
+    model.add(Embedding(len(word_model.wv.vocab) + 1, 350,
                         input_length=x_train_pad.shape[1],
                         weights=[embedding_matrix],
                         trainable=False))
     model.add(Flatten())
-    model.add(Dense(2, activation=hidden_layer_activation, kernel_regularizer='l2'))
-    model.add(Dropout(0.1))
+    model.add(Dense(2, activation=hidden_layer_activation))
+    # model.add(Dropout(0.1))
     model.add(Dense(2, activation='softmax'))
     model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=['acc'])
     model.fit(x_train_pad, y_train, batch, epochs)
     return model
 
 
-def main():
+def main(dir_path):
     print('\n Reading data...\n')
-    x_train = read_file('/Users/piyushbhandari/Desktop/msci-text-analytics-s20/Assignment_1/data'
-                        '/train_data_with_stopwords.csv')
+    # x_train = read_file('../Assignment_1/data'
+    #                     '/train_data_with_stopwords.csv')
+    x_train = read_file(os.path.join(dir_path, 'train_data_with_stopwords.csv'))
     y_train = get_labels(x_train)
     y_train = to_categorical(np.asarray(y_train))
 
-    x_valid = read_file('/Users/piyushbhandari/Desktop/msci-text-analytics-s20/Assignment_1/data'
-                        '/valid_data_with_stopwords.csv')
+    # x_valid = read_file('../Assignment_1/data'
+    #                     '/valid_data_with_stopwords.csv')
+    x_valid = read_file(os.path.join(dir_path, 'valid_data_with_stopwords.csv'))
     y_valid = get_labels(x_valid)
     y_valid = to_categorical(np.asarray(y_valid))
 
     print('\n Loading Word2Vec model...\n')
-    word_model = Word2Vec.load('../Assignment_3/data/w2v.model')
+    word_model = Word2Vec.load('../Assignment_3/data/w2v_min_count_1_350.model')
 
     print('\n Creating the embedding matrix...\n')
-    embedding_matrix = np.zeros((len(word_model.wv.vocab) + 1, 50))
+    embedding_matrix = np.zeros((len(word_model.wv.vocab) + 1, 350))
     for i, vec in enumerate(word_model.wv.vectors):
         embedding_matrix[i] = vec
     # print('\n Embedding Matrix Shape: {}\n'.format(embedding_matrix.shape))
@@ -72,16 +75,16 @@ def main():
     x_valid_seq = tokenizer.texts_to_sequences(x_valid)
     x_valid_pad = pad_sequences(x_valid_seq)
 
-    # print('\n Training model with relu activation...\n')
-    # hidden_layer_activation = 'relu'
-    # nn_model = create_model(word_model, embedding_matrix, x_train_pad, y_train, hidden_layer_activation)
-    # nn_model.save('data/nn_relu.h5')
+    print('\n Training model with relu activation...\n')
+    hidden_layer_activation = 'relu'
+    nn_model = create_model(word_model, embedding_matrix, x_train_pad, y_train, hidden_layer_activation)
+    nn_model.save('data/nn_relu.h5')
 
-    # print('\n Training model with sigmoid activation...\n')
-    # hidden_layer_activation = 'sigmoid'
-    # nn_model = create_model(word_model, embedding_matrix, x_train_pad, y_train, hidden_layer_activation)
-    # nn_model.save('data/nn_sigmoid.h5')
-    # print('\n Done...\n')
+    print('\n Training model with sigmoid activation...\n')
+    hidden_layer_activation = 'sigmoid'
+    nn_model = create_model(word_model, embedding_matrix, x_train_pad, y_train, hidden_layer_activation)
+    nn_model.save('data/nn_sigmoid.h5')
+    print('\n Done...\n')
 
     print('\n Training model with tanh activation...\n')
     hidden_layer_activation = 'tanh'
@@ -93,4 +96,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1])
